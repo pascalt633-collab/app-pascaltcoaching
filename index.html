@@ -177,6 +177,11 @@ parent: () => {
     <button class="tile" data-go="p-monado"><b>Comprendre mon ado</b><span>Mon Ado</span></button>
     <button class="tile" data-go="p-accomp"><b>Être accompagné</b><span>Bilans, séances, formations</span></button>
   </div>
+  ${L.appel_decouverte ? `<div class="card">
+    <p><b>Un premier échange avec Pascal Tamin</b></p>
+    <p class="small">Pour comprendre votre situation. 15 minutes, par téléphone. Gratuit.</p>
+    ${ext(L.appel_decouverte,'Demander un appel','btn ghost')}
+  </div>` : ''}
   ${ext(L.espace_formation,'Ouvrir mon espace de formation','btn ghost')}
   ${installCard(false)}
   <p class="small">Pascal Tamin, coach scolaire et d'orientation à Chamalières. 30 ans dans l'Éducation nationale, CPE puis chef d'établissement. Plus de 1000 familles accompagnées.</p>`;
@@ -240,6 +245,11 @@ parent: () => {
     <div class="row"><div>Apprendre à apprendre${L.apprendre_a_apprendre?`<small><a href="${esc(L.apprendre_a_apprendre)}" target="_blank" rel="noopener">Voir la formation</a></small>`:''}</div><span class="p">${esc(P.apprendre_a_apprendre)}</span></div>
     <div class="row"><div>La santé mentale de mon ado${L.sante_mentale?`<small><a href="${esc(L.sante_mentale)}" target="_blank" rel="noopener">Voir la formation</a></small>`:''}</div><span class="p">${esc(P.sante_mentale)}</span></div>
   </div>
+  ${L.livre ? `<span class="eyebrow">Le livre</span>
+  <div class="list">
+    <div class="row"><div>Réveiller la motivation de votre ado en 15 jours<small><a href="${esc(L.livre)}" target="_blank" rel="noopener">Voir le livre</a></small></div><span class="p">${esc(P.livre)}</span></div>
+  </div>` : ''}
+  ${ext(L.appel_decouverte,'Demander un appel découverte gratuit','btn ghost')}
   <a class="btn ghost" href="${mailto('Question depuis l\'application')}">Poser une question à Pascal</a>
   <p class="small">${esc(C.email_contact)}</p>
   ${installCard(false)}`,
@@ -311,7 +321,7 @@ jeune: () => {
     <button class="tile" data-go="j-test"><b>Mon orientation</b><span>Le test Profil Orientation</span></button>
     <button class="tile" data-go="j-parcoursup"><b>Parcoursup 2027</b><span>Ce qui est connu</span></button>
     <button class="tile" data-go="j-apprendre"><b>Apprendre à apprendre</b><span>Tes méthodes de travail</span></button>
-    <div class="tile off" aria-disabled="true"><b>Motivation et confiance</b><span>Bientôt</span></div>
+    ${(C.motivation_tests||[]).length ? `<button class="tile" data-go="j-motivation"><b>Motivation et confiance</b><span>Des tests pour mieux te connaître</span></button>` : ''}
   </div>
   ${perso ? go('j-espace','Mon espace','btn ghost') : ''}
   ${installCard(true)}`;
@@ -352,12 +362,28 @@ jeune: () => {
 
 'j-apprendre': () => `
   <h1>Apprendre à apprendre</h1>
+  ${L.audit_methodes ? `<div class="card soft">
+    <p><b>Audit de tes méthodes d'apprentissage</b></p>
+    <p class="small">5 minutes pour savoir si tu apprends de la bonne façon. Gratuit.</p>
+    ${ext(L.audit_methodes,"Faire l'audit")}
+  </div>` : ''}
+  <h2>La formation</h2>
   <p>Une formation en ligne, sous forme de jeu, avec une progression par niveaux. Tu avances à ton rythme.</p>
   <div class="card"><p>Elle est entièrement privée : Pascal Tamin n'a accès ni à ton parcours ni à tes résultats.</p></div>
   <p>C'est une formation payante, prise par tes parents.</p>
   <button class="btn" data-share="p-accomp">Montrer à mes parents</button>
   <div class="slot"></div>
   ${ext(L.espace_formation,'Ouvrir mon espace de formation','btn ghost')}
+  ${installCard(true)}`,
+
+'j-motivation': () => `
+  <h1>Motivation et confiance</h1>
+  <p class="lead">Des tests pour mieux te connaître. Choisis celui qui t'intéresse.</p>
+  ${(C.motivation_tests||[]).map(t => `<div class="card">
+    <p><b>${esc(t.titre)}</b></p>
+    ${t.texte ? `<p class="small">${esc(t.texte)}</p>` : ''}
+    ${ext(t.lien,'Faire ce test','btn ghost')}
+  </div>`).join('')}
   ${installCard(true)}`,
 
 'j-espace': () => {
@@ -377,7 +403,7 @@ jeune: () => {
 const homeOf = () => mem.get('role','') === 'jeune' ? 'jeune' : (mem.get('role','') === 'parent' ? 'parent' : 'choix');
 function route(){ const h = location.hash.slice(1); return screens[h] ? h : homeOf(); }
 
-const CONTENUS = ['p-parcoursup','p-monado','orientation-parents','p-accomp','j-test','j-apres','j-parcoursup','j-apprendre'];
+const CONTENUS = ['p-parcoursup','p-monado','orientation-parents','p-accomp','j-test','j-apres','j-parcoursup','j-apprendre','j-motivation'];
 function render(){
   const r = route();
   if (CONTENUS.includes(r)){ try{ sessionStorage.setItem('ptc_vues', String((+sessionStorage.getItem('ptc_vues')||0)+1)); }catch(e){} }
