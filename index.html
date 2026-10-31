@@ -67,6 +67,14 @@ textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var
 .toast{font-size:15px;background:var(--soft);border-radius:10px;padding:10px 12px}
 .answer{border-top:1px solid var(--line);padding-top:9px}
 .answer:first-of-type{border-top:0;padding-top:0}
+.linkbtn{background:none;border:0;padding:4px 0;font-size:14px;color:var(--muted);text-decoration:underline;cursor:pointer;align-self:center}
+ol.guide{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+ol.guide li{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:12px}
+.picto{width:52px;height:52px;border-radius:12px;background:var(--soft);color:var(--brand);display:grid;place-items:center;font-size:26px;font-weight:700}
+.hint{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(10px + env(safe-area-inset-bottom,0px));background:var(--brand);color:var(--brand-ink);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:700;display:flex;gap:8px;align-items:center;z-index:20;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.hint span{display:inline-block}
+@media (prefers-reduced-motion:no-preference){.hint span{animation:bob 1.2s ease-in-out infinite}@keyframes bob{50%{transform:translateY(4px)}}}
+main .wrap{padding-bottom:80px}
 footer .wrap{padding-block:0 30px;display:flex;flex-direction:column;gap:6px}
 footer button,footer a{background:none;border:0;padding:0;font-size:14px;color:var(--muted);text-decoration:underline;cursor:pointer;text-align:left}
 </style>
@@ -80,6 +88,10 @@ footer button,footer a{background:none;border:0;padding:0;font-size:14px;color:v
 <script>
 (function(){
 const C = window.CONTENU;
+if (!C){
+  document.getElementById('view').innerHTML = '<h1>Un instant</h1><p>Le contenu ne s\'est pas chargé. Vérifiez votre connexion, puis rechargez la page.</p>';
+  return;
+}
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -98,19 +110,33 @@ const isStandalone = () => window.matchMedia('(display-mode: standalone)').match
 const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
 const base = location.origin;
 
-let installEvent = null;
-window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; if (route()==='parent' || route()==='choix') render(); });
+/* Nombre de visites (une par ouverture), gardé sur le téléphone */
+let visits = mem.get('visites', 0);
+try{ if (!sessionStorage.getItem('ptc_s')){ sessionStorage.setItem('ptc_s','1'); visits++; mem.set('visites', visits); } }catch(e){}
+const inApp = () => /FBAN|FBAV|Instagram|LinkedInApp|GSA\/|Line\/|Snapchat|Twitter/i.test(navigator.userAgent);
 
-function installCard(){
-  if (isStandalone()) return '';
-  const android = installEvent ? `<button class="btn ghost" id="do-install">Installer l'application</button>` :
-    `<p><b>Android</b> : dans Chrome, menu ⋮, puis « Installer l'application » ou « Ajouter à l'écran d'accueil ».</p>`;
-  const ios = `<p><b>iPhone</b> : dans Safari, touchez Partager, puis « Sur l'écran d'accueil ».</p>`;
-  return `<div class="card"><span class="eyebrow">Installer sur votre téléphone</span>${isIOS()? ios : android + ios}</div>`;
+let installEvent = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; if (['parent','jeune','installer'].includes(route())) render(); });
+
+/* Proposition d'installation : discrète, à partir de la 2e visite seulement */
+function installCard(tu){
+  let vues = 0; try{ vues = +sessionStorage.getItem('ptc_vues') || 0; }catch(e){}
+  if (isStandalone() || mem.get('install_non', false) || (visits < 2 && vues < 1)) return '';
+  const btn = installEvent ? `<button class="btn" id="do-install">Installer</button>` : go('installer','Voir comment');
+  return `<div class="card soft">
+    <p><b>${tu ? "Ajoute l'application à ton écran d'accueil" : "Ajoutez l'application à votre écran d'accueil"}</b></p>
+    <p class="small">${tu ? "Tu la retrouveras d'un geste, comme tes autres applications." : "Vous la retrouverez d'un geste, comme vos autres applications."}</p>
+    ${btn}
+    <button class="linkbtn" id="install-non">Ne plus proposer</button>
+  </div>`;
 }
 
+const ICON_SHARE = `<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+const ICON_PLUS = `<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+const ICON_OK = `<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="#1f4e5a"/><text x="12" y="15.5" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="8.5" fill="#fff">PT</text></svg>`;
+
 function shareLink(path, done){
-  const url = base + '/#' + path;
+  const url = path ? base + '/#' + path : base + '/';
   if (navigator.share){ navigator.share({title:'PascalTCoaching', url}).catch(()=>{}); return; }
   const fallback = () => done(`Copiez ce lien : <b>${esc(url)}</b>`);
   if (navigator.clipboard && navigator.clipboard.writeText){
@@ -131,7 +157,6 @@ choix: () => `
   ${go('set-parent','Un parent')}
   ${go('age','Un lycéen ou une lycéenne','btn ghost')}
   <p class="small">Parents et jeunes ont chacun leur espace. Ce qu'un jeune écrit dans le sien n'est pas montré à ses parents.</p>
-  ${installCard()}
   <p class="small">L'application est gratuite. Certains contenus et accompagnements sont payants ; leur prix est toujours affiché avant tout achat.</p>`,
 
 parent: () => {
@@ -148,7 +173,7 @@ parent: () => {
     <button class="tile" data-go="p-accomp"><b>Être accompagné</b><span>Bilans, séances, formations</span></button>
   </div>
   ${ext(L.espace_formation,'Ouvrir mon espace de formation','btn ghost')}
-  ${installCard()}
+  ${installCard(false)}
   <p class="small">Pascal Tamin, coach scolaire et d'orientation à Chamalières. 30 ans dans l'Éducation nationale, CPE puis chef d'établissement. Plus de 1000 familles accompagnées.</p>`;
 },
 
@@ -161,7 +186,8 @@ parent: () => {
     <p><b>Le parcours Parcoursup 2027 est en préparation.</b> Laissez votre adresse pour être prévenu de sa sortie.</p>
     ${L.prevenir_parcoursup ? ext(L.prevenir_parcoursup,'Me prévenir') :
       `<a class="btn" href="${mailto('Prévenez-moi : parcours Parcoursup 2027')}">Me prévenir par email</a><p class="small">Ou écrivez à ${esc(C.email_contact)}</p>`}
-  </div>`,
+  </div>
+  ${installCard(false)}`,
 
 'p-monado': () => `
   <h1>Mon Ado</h1>
@@ -171,7 +197,8 @@ parent: () => {
   <div class="card">
     <span class="eyebrow">Accès complet : ${esc(P.mon_ado)}</span>
     <p>Ces ${esc(P.mon_ado)} sont entièrement déduits si vous poursuivez avec un bilan (orientation ou 4D) ou un pack de séances. Ils ne sont pas déduits d'une séance seule.</p>
-  </div>`,
+  </div>
+  ${installCard(false)}`,
 
 'orientation-parents': () => `
   <h1>L'orientation de votre enfant</h1>
@@ -187,7 +214,8 @@ parent: () => {
   ${ext(L.commande_bilan_ecrit,'Commander le bilan écrit')}
   ${ext(L.rendez_vous,'Prendre rendez-vous','btn ghost')}
   <button class="btn ghost" data-share="test">Envoyer le test à mon enfant</button>
-  <div class="slot"></div>`,
+  <div class="slot"></div>
+  ${installCard(false)}`,
 
 'p-accomp': () => `
   <h1>Être accompagné</h1>
@@ -206,7 +234,37 @@ parent: () => {
     <div class="row"><div>La santé mentale de mon ado${L.sante_mentale?`<small><a href="${esc(L.sante_mentale)}" target="_blank" rel="noopener">Voir la formation</a></small>`:''}</div><span class="p">${esc(P.sante_mentale)}</span></div>
   </div>
   <a class="btn ghost" href="${mailto('Question depuis l\'application')}">Poser une question à Pascal</a>
-  <p class="small">${esc(C.email_contact)}</p>`,
+  <p class="small">${esc(C.email_contact)}</p>
+  ${installCard(false)}`,
+
+installer: () => {
+  if (isStandalone()) return `<h1>C'est fait</h1><p>L'application est déjà sur votre écran d'accueil.</p>${go(homeOf(),"Retour à l'accueil",'btn ghost')}`;
+  if (isIOS()){
+    const step0 = inApp() ? `<div class="card soft"><p><b>D'abord, ouvrir ce lien dans Safari</b></p>
+      <p>Le lien s'est ouvert dans une autre application. Toucher « ⋯ » ou l'icône de boussole, puis « Ouvrir dans Safari ».</p>
+      <button class="btn ghost" data-share="">Copier le lien</button><div class="slot"></div></div>` : '';
+    return `<h1>Ajouter à l'écran d'accueil</h1>
+    <p class="lead">Trois gestes, une seule fois.</p>
+    ${step0}
+    <ol class="guide">
+      <li><span class="picto">${ICON_SHARE}</span><span><b>Toucher le bouton Partager</b>, dans la barre en bas de l'écran. S'il n'apparaît pas, toucher d'abord « ⋯ ».</span></li>
+      <li><span class="picto">${ICON_PLUS}</span><span><b>Faire défiler</b> la liste et toucher <b>« Sur l'écran d'accueil »</b>.</span></li>
+      <li><span class="picto">${ICON_OK}</span><span>Toucher <b>« Ajouter »</b>, en haut à droite. L'icône PT apparaît à côté de vos autres applications.</span></li>
+    </ol>
+    ${inApp() ? '' : `<div class="hint" aria-hidden="true">Le bouton Partager est en bas<span>↓</span></div>`}`;
+  }
+  if (/android/i.test(navigator.userAgent)){
+    return `<h1>Ajouter à l'écran d'accueil</h1>
+    ${installEvent ? `<p>Un seul geste :</p><button class="btn" id="do-install">Installer l'application</button>` :
+    `<ol class="guide">
+      <li><span class="picto">⋮</span><span>Dans Chrome, toucher le <b>menu ⋮</b>, en haut à droite.</span></li>
+      <li><span class="picto">${ICON_PLUS}</span><span>Toucher <b>« Installer l'application »</b> ou <b>« Ajouter à l'écran d'accueil »</b>.</span></li>
+      <li><span class="picto">${ICON_OK}</span><span>Confirmer. L'icône PT apparaît à côté de vos autres applications.</span></li>
+    </ol>`}`;
+  }
+  return `<h1>Ajouter à l'écran d'accueil</h1>
+  <p>Ouvrez <b>${esc(location.host)}</b> sur votre téléphone : la marche à suivre s'affichera.</p>`;
+},
 
 age: () => `
   <h1>Avant de commencer</h1>
@@ -248,7 +306,8 @@ jeune: () => {
     <button class="tile" data-go="j-apprendre"><b>Apprendre à apprendre</b><span>Tes méthodes de travail</span></button>
     <div class="tile off" aria-disabled="true"><b>Motivation et confiance</b><span>Bientôt</span></div>
   </div>
-  ${perso ? go('j-espace','Mon espace','btn ghost') : ''}`;
+  ${perso ? go('j-espace','Mon espace','btn ghost') : ''}
+  ${installCard(true)}`;
 },
 
 'j-test': () => `
@@ -256,7 +315,8 @@ jeune: () => {
   <p>Un test pour mieux te connaître et réfléchir à ton orientation. Compte 20 à 25 minutes.</p>
   <div class="card"><p>À la fin, tu choisis si tu envoies tes résultats à Pascal Tamin. Il est le seul à les recevoir. Ils ne sont pas envoyés à tes parents.</p></div>
   ${ext(L.test_orientation,'Commencer le test')}
-  ${go('j-apres',"J'ai terminé le test",'btn ghost')}`,
+  ${go('j-apres',"J'ai terminé le test",'btn ghost')}
+  ${installCard(true)}`,
 
 'j-apres': () => `
   <h1>Et maintenant ?</h1>
@@ -267,7 +327,8 @@ jeune: () => {
     <div class="slot"></div>
     <p class="small">Le lien ouvre la page « Orientation » pour les parents. Il ne contient pas tes résultats.</p>
   </div>
-  ${go('jeune',"Retour à l'accueil",'btn ghost')}`,
+  ${go('jeune',"Retour à l'accueil",'btn ghost')}
+  ${installCard(true)}`,
 
 'j-parcoursup': () => `
   <h1>Parcoursup 2027</h1>
@@ -279,7 +340,8 @@ jeune: () => {
     <p><b>Un parcours Parcoursup 2027 est en préparation.</b></p>
     ${L.prevenir_parcoursup ? ext(L.prevenir_parcoursup,'Me prévenir') :
       `<a class="btn" href="${mailto('Prévenez-moi : parcours Parcoursup 2027')}">Me prévenir par email</a>`}
-  </div>`,
+  </div>
+  ${installCard(true)}`,
 
 'j-apprendre': () => `
   <h1>Apprendre à apprendre</h1>
@@ -288,7 +350,8 @@ jeune: () => {
   <p>C'est une formation payante, prise par tes parents.</p>
   <button class="btn" data-share="p-accomp">Montrer à mes parents</button>
   <div class="slot"></div>
-  ${ext(L.espace_formation,'Ouvrir mon espace de formation','btn ghost')}`,
+  ${ext(L.espace_formation,'Ouvrir mon espace de formation','btn ghost')}
+  ${installCard(true)}`,
 
 'j-espace': () => {
   const reps = mem.get('reponses', []);
@@ -307,12 +370,15 @@ jeune: () => {
 const homeOf = () => mem.get('role','') === 'jeune' ? 'jeune' : (mem.get('role','') === 'parent' ? 'parent' : 'choix');
 function route(){ const h = location.hash.slice(1); return screens[h] ? h : homeOf(); }
 
+const CONTENUS = ['p-parcoursup','p-monado','orientation-parents','p-accomp','j-test','j-apres','j-parcoursup','j-apprendre'];
 function render(){
   const r = route();
+  if (CONTENUS.includes(r)){ try{ sessionStorage.setItem('ptc_vues', String((+sessionStorage.getItem('ptc_vues')||0)+1)); }catch(e){} }
   $('#view').innerHTML = screens[r]();
   $('#back').hidden = (r === homeOf() || r === 'choix');
   const role = mem.get('role','');
-  $('#foot').innerHTML = role ? `<button data-go="reset">Changer de profil</button><a href="/donnees.html">Vos données</a>` : `<a href="/donnees.html">Vos données</a>`;
+  const inst = (isStandalone() || r === 'installer') ? '' : `<button data-go="installer">Ajouter à l'écran d'accueil</button>`;
+  $('#foot').innerHTML = inst + (role ? `<button data-go="reset">Changer de profil</button>` : '') + `<a href="/donnees.html">Vos données</a>`;
   window.scrollTo(0,0);
   bind(r);
 }
@@ -328,6 +394,8 @@ function nav(r){
 function bind(r){
   const ib = $('#do-install');
   if (ib) ib.onclick = () => { installEvent.prompt(); installEvent.userChoice.finally(()=>{ installEvent=null; render(); }); };
+  const no = $('#install-non');
+  if (no) no.onclick = () => { mem.set('install_non', true); render(); };
   if (r === 'accord'){
     $('#accord-btn').onclick = () => {
       if (!$('#accord-ok').checked){ $('.slot').innerHTML = `<p class="toast">Cochez la case pour donner votre accord.</p>`; return; }
