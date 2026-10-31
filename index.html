@@ -183,9 +183,9 @@ parent: () => {
   <div class="card"><span class="eyebrow">Ce qui n'est pas encore connu</span>${facts(C.parcoursup.pas_encore_connu)}</div>
   <p class="small">Informations vérifiées le ${esc(C.parcoursup.verifie_le)}. Cette page est mise à jour à chaque annonce officielle.</p>
   <div class="card soft">
-    <p><b>Le parcours Parcoursup 2027 est en préparation.</b> Laissez votre adresse pour être prévenu de sa sortie.</p>
+    <p><b>Cap Parcoursup 2027 est en préparation.</b> Laissez votre adresse pour être prévenu de son ouverture.</p>
     ${L.prevenir_parcoursup ? ext(L.prevenir_parcoursup,'Me prévenir') :
-      `<a class="btn" href="${mailto('Prévenez-moi : parcours Parcoursup 2027')}">Me prévenir par email</a><p class="small">Ou écrivez à ${esc(C.email_contact)}</p>`}
+      `<a class="btn" href="${mailto('Prévenez-moi : Cap Parcoursup 2027')}">Me prévenir par email</a><p class="small">Ou écrivez à ${esc(C.email_contact)}</p>`}
   </div>
   ${installCard(false)}`,
 
@@ -337,9 +337,9 @@ jeune: () => {
   <div class="card"><span class="eyebrow">Pas encore connu</span><p>Le calendrier 2027 n'est pas publié.</p></div>
   <p class="small">Vérifié le ${esc(C.parcoursup.verifie_le)}.</p>
   <div class="card soft">
-    <p><b>Un parcours Parcoursup 2027 est en préparation.</b></p>
+    <p><b>Cap Parcoursup 2027 est en préparation.</b></p>
     ${L.prevenir_parcoursup ? ext(L.prevenir_parcoursup,'Me prévenir') :
-      `<a class="btn" href="${mailto('Prévenez-moi : parcours Parcoursup 2027')}">Me prévenir par email</a>`}
+      `<a class="btn" href="${mailto('Prévenez-moi : Cap Parcoursup 2027')}">Me prévenir par email</a>`}
   </div>
   ${installCard(true)}`,
 
