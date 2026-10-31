@@ -31,9 +31,8 @@ window.CONTENU = {
     // Pas de lien commun : chaque formation a son propre accès, envoyé
     // par email après l'achat. Laisser vide (bouton masqué).
     espace_formation: "",
-    // À COMPLÉTER : formulaire Systeme.io « Être prévenu – Parcoursup 2027 ».
-    // Tant qu'il est vide, le bouton propose d'écrire un email.
-    prevenir_parcoursup: ""
+    // Page Systeme.io « Cap Parcoursup 2027 : être prévenu »
+    prevenir_parcoursup: "https://pascal-tamin.systeme.io/me-prevenir"
   },
 
   email_contact: "contact@pascaltamin.com",
