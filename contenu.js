@@ -27,9 +27,9 @@ window.CONTENU = {
     apprendre_a_apprendre: "https://pascal-tamin.systeme.io/apprendre-a-apprendre",
     sante_mentale: "https://pascal-tamin.systeme.io/formation-sante-mentale-en-ligne",
 
-    // À COMPLÉTER : page Systeme.io de commande du bilan d'orientation écrit
-    commande_bilan_ecrit: "",
-    // À COMPLÉTER : page de connexion à l'espace de formation Systeme.io
+    commande_bilan_ecrit: "https://pascal-tamin.systeme.io/bilan-ecrit",
+    // Pas de lien commun : chaque formation a son propre accès, envoyé
+    // par email après l'achat. Laisser vide (bouton masqué).
     espace_formation: "",
     // À COMPLÉTER : formulaire Systeme.io « Être prévenu – Parcoursup 2027 ».
     // Tant qu'il est vide, le bouton propose d'écrire un email.
