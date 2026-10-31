@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PascalTCoaching</title>
+<meta name="description" content="Orientation, Parcoursup, méthodes de travail, motivation : des repères pour les lycéens et leurs parents.">
+<meta name="theme-color" content="#1f4e5a">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icons/icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PascalTCoaching">
+<style>
+:root{
+  --bg:#ffffff; --ink:#1d2b2f; --muted:#5a6b6f; --line:#d5ddda;
+  --brand:#1f4e5a; --brand-ink:#ffffff; --accent:#c88a1c; --soft:#e4eeec;
+  --display:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#141d1f; --ink:#e7efed; --muted:#9fb1b3; --line:#2e3d40;
+  --brand:#7fb6c0; --brand-ink:#0f1a1c; --accent:#e3aa45; --soft:#22343a; color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.5;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+button{font:inherit;color:inherit}
+a{color:var(--brand)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:520px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+header{position:sticky;top:0;background:var(--bg);border-bottom:1px solid var(--line);z-index:5}
+header .wrap{display:flex;align-items:center;gap:10px;padding-block:12px}
+.back{border:0;background:none;font-size:26px;line-height:1;cursor:pointer;padding:0 6px;color:var(--brand)}
+.back[hidden]{display:none}
+.brand{font-family:var(--display);font-weight:650;font-size:18px;color:var(--brand)}
+main .wrap{display:flex;flex-direction:column;gap:16px;padding-block:22px 40px}
+h1,h2{font-family:var(--display);font-weight:650;line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:27px} h2{font-size:20px}
+p{margin:0}
+.lead{color:var(--muted)}
+.card{border:1px solid var(--line);border-radius:14px;padding:15px;display:flex;flex-direction:column;gap:9px}
+.card.soft{background:var(--soft);border-color:transparent}
+.eyebrow{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.btn{display:block;width:100%;text-align:center;border:0;border-radius:12px;padding:14px;font-weight:700;cursor:pointer;background:var(--brand);color:var(--brand-ink);text-decoration:none}
+.btn.ghost{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:14px 12px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-height:96px;text-decoration:none;color:var(--ink)}
+.tile b{font-size:16px;line-height:1.25}
+.tile span{font-size:14px;color:var(--muted)}
+.tile.off{opacity:.55;cursor:default}
+.list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.row{display:flex;justify-content:space-between;gap:12px;padding:12px 14px;border-top:1px solid var(--line);align-items:baseline}
+.row:first-child{border-top:0}
+.row .p{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.row small{display:block;color:var(--muted);font-size:14px}
+.steps{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none;counter-reset:s}
+.steps li{display:grid;grid-template-columns:30px 1fr;gap:10px;counter-increment:s}
+.steps li::before{content:counter(s);width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--brand);font-weight:700;display:grid;place-items:center;font-size:15px}
+ul.facts{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.small{font-size:14px;color:var(--muted)}
+.ia{font-size:14px;border-left:3px solid var(--accent);padding-left:10px;color:var(--muted)}
+textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;min-height:96px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start}
+.check input{width:22px;height:22px;margin-top:2px;flex:none}
+.toast{font-size:15px;background:var(--soft);border-radius:10px;padding:10px 12px}
+.answer{border-top:1px solid var(--line);padding-top:9px}
+.answer:first-of-type{border-top:0;padding-top:0}
+footer .wrap{padding-block:0 30px;display:flex;flex-direction:column;gap:6px}
+footer button,footer a{background:none;border:0;padding:0;font-size:14px;color:var(--muted);text-decoration:underline;cursor:pointer;text-align:left}
+</style>
+</head>
+<body>
+<header><div class="wrap"><button class="back" id="back" aria-label="Retour" hidden>‹</button><span class="brand">PascalTCoaching</span></div></header>
+<main><div class="wrap" id="view" aria-live="polite"></div></main>
+<footer><div class="wrap" id="foot"></div></footer>
+
+<script src="/contenu.js"></script>
+<script>
+(function(){
+const C = window.CONTENU;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Mémoire locale (rien n'est envoyé) ---------- */
+const mem = {
+  get(k, d){ try{ const v = localStorage.getItem('ptc_'+k); return v === null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('ptc_'+k, JSON.stringify(v)); }catch(e){} },
+  del(k){ try{ localStorage.removeItem('ptc_'+k); }catch(e){} }
+};
+
+/* ---------- Outils d'affichage ---------- */
+const ext = (url, label, cls='btn') => url ? `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${label}</a>` : '';
+const go  = (route, label, cls='btn') => `<button class="${cls}" data-go="${route}">${label}</button>`;
+const facts = arr => `<ul class="facts">${arr.map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`;
+const isStandalone = () => window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
+const base = location.origin;
+
+let installEvent = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; if (route()==='parent' || route()==='choix') render(); });
+
+function installCard(){
+  if (isStandalone()) return '';
+  const android = installEvent ? `<button class="btn ghost" id="do-install">Installer l'application</button>` :
+    `<p><b>Android</b> : dans Chrome, menu ⋮, puis « Installer l'application » ou « Ajouter à l'écran d'accueil ».</p>`;
+  const ios = `<p><b>iPhone</b> : dans Safari, touchez Partager, puis « Sur l'écran d'accueil ».</p>`;
+  return `<div class="card"><span class="eyebrow">Installer sur votre téléphone</span>${isIOS()? ios : android + ios}</div>`;
+}
+
+function shareLink(path, done){
+  const url = base + '/#' + path;
+  if (navigator.share){ navigator.share({title:'PascalTCoaching', url}).catch(()=>{}); return; }
+  const fallback = () => done(`Copiez ce lien : <b>${esc(url)}</b>`);
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(()=>done('Lien copié. Vous pouvez le coller dans un message.'), fallback);
+  } else fallback();
+}
+
+function mailto(subject){ return `mailto:${C.email_contact}?subject=${encodeURIComponent(subject)}`; }
+
+/* ---------- Écrans ---------- */
+const P = C.prix, L = C.liens;
+const screens = {
+
+choix: () => `
+  <h1>Bienvenue</h1>
+  <p class="lead">Votre partenaire pour l'orientation et la motivation scolaires.</p>
+  <p>Qui utilise l'application sur ce téléphone ?</p>
+  ${go('set-parent','Un parent')}
+  ${go('age','Un lycéen ou une lycéenne','btn ghost')}
+  <p class="small">Parents et jeunes ont chacun leur espace. Ce qu'un jeune écrit dans le sien n'est pas montré à ses parents.</p>
+  ${installCard()}
+  <p class="small">L'application est gratuite. Certains contenus et accompagnements sont payants ; leur prix est toujours affiché avant tout achat.</p>`,
+
+parent: () => {
+  const s = C.semaine;
+  const week = s.parent_titre ? `<div class="card soft"><span class="eyebrow">Cette semaine</span><p><b>${esc(s.parent_titre)}</b></p>${s.parent_texte.split(/\n\s*\n/).map(t=>`<p>${esc(t)}</p>`).join('')}</div>` : '';
+  return `
+  <h1>Bonjour</h1>
+  ${week}
+  <h2>Ce qui vous préoccupe</h2>
+  <div class="tiles">
+    <button class="tile" data-go="p-parcoursup"><b>Parcoursup 2027</b><span>Ce qui est connu aujourd'hui</span></button>
+    <button class="tile" data-go="orientation-parents"><b>L'orientation de mon enfant</b><span>Le test gratuit, et après</span></button>
+    <button class="tile" data-go="p-monado"><b>Comprendre mon ado</b><span>Mon Ado</span></button>
+    <button class="tile" data-go="p-accomp"><b>Être accompagné</b><span>Bilans, séances, formations</span></button>
+  </div>
+  ${ext(L.espace_formation,'Ouvrir mon espace de formation','btn ghost')}
+  ${installCard()}
+  <p class="small">Pascal Tamin, coach scolaire et d'orientation à Chamalières. 30 ans dans l'Éducation nationale, CPE puis chef d'établissement. Plus de 1000 familles accompagnées.</p>`;
+},
+
+'p-parcoursup': () => `
+  <h1>Parcoursup 2027</h1>
+  <div class="card"><span class="eyebrow">Ce qui est confirmé</span>${facts(C.parcoursup.confirme)}</div>
+  <div class="card"><span class="eyebrow">Ce qui n'est pas encore connu</span>${facts(C.parcoursup.pas_encore_connu)}</div>
+  <p class="small">Informations vérifiées le ${esc(C.parcoursup.verifie_le)}. Cette page est mise à jour à chaque annonce officielle.</p>
+  <div class="card soft">
+    <p><b>Le parcours Parcoursup 2027 est en préparation.</b> Laissez votre adresse pour être prévenu de sa sortie.</p>
+    ${L.prevenir_parcoursup ? ext(L.prevenir_parcoursup,'Me prévenir') :
+      `<a class="btn" href="${mailto('Prévenez-moi : parcours Parcoursup 2027')}">Me prévenir par email</a><p class="small">Ou écrivez à ${esc(C.email_contact)}</p>`}
+  </div>`,
+
+'p-monado': () => `
+  <h1>Mon Ado</h1>
+  <p>Une formation pour parents, sous forme de conversation avec un coach IA qui parle avec la voix de Pascal Tamin. Elle est organisée selon 8 situations d'élève.</p>
+  <p class="ia">Vous échangez avec une intelligence artificielle.</p>
+  ${ext(L.mon_ado,'Commencer gratuitement')}
+  <div class="card">
+    <span class="eyebrow">Accès complet : ${esc(P.mon_ado)}</span>
+    <p>Ces ${esc(P.mon_ado)} sont entièrement déduits si vous poursuivez avec un bilan (orientation ou 4D) ou un pack de séances. Ils ne sont pas déduits d'une séance seule.</p>
+  </div>`,
+
+'orientation-parents': () => `
+  <h1>L'orientation de votre enfant</h1>
+  <ol class="steps">
+    <li><span>Votre enfant passe le test <b>Profil Orientation</b> : gratuit, 20 à 25 minutes, de la 3e à l'après-bac.</span></li>
+    <li><span>Avec son accord, ses résultats sont envoyés à Pascal Tamin seul. Ils ne vous sont pas transmis.</span></li>
+    <li><span>Pour aller plus loin, deux possibilités.</span></li>
+  </ol>
+  <div class="list">
+    <div class="row"><div>Bilan d'orientation écrit<small>Livré sous 72 h ouvrées. Déductible de l'entretien.</small></div><span class="p">${esc(P.bilan_ecrit)}</span></div>
+    <div class="row"><div>Entretien d'orientation, 1 h 30<small>Bilan écrit inclus.</small></div><span class="p">${esc(P.entretien_orientation)}</span></div>
+  </div>
+  ${ext(L.commande_bilan_ecrit,'Commander le bilan écrit')}
+  ${ext(L.rendez_vous,'Prendre rendez-vous','btn ghost')}
+  <button class="btn ghost" data-share="test">Envoyer le test à mon enfant</button>
+  <div class="slot"></div>`,
+
+'p-accomp': () => `
+  <h1>Être accompagné</h1>
+  <span class="eyebrow">Avec Pascal Tamin</span>
+  <div class="list">
+    <div class="row"><div>Entretien d'orientation, 1 h 30<small>Bilan écrit inclus</small></div><span class="p">${esc(P.entretien_orientation)}</span></div>
+    <div class="row"><div>Bilan 4D${L.bilan_4d?`<small><a href="${esc(L.bilan_4d)}" target="_blank" rel="noopener">En savoir plus</a></small>`:''}</div><span class="p">${esc(P.bilan_4d)}</span></div>
+    <div class="row"><div>Séance</div><span class="p">${esc(P.seance)}</span></div>
+    <div class="row"><div>Pack 5 séances</div><span class="p">${esc(P.pack_5)}</span></div>
+    <div class="row"><div>Suivi Annuel Individualisé<small>8 séances, sur candidature</small></div><span class="p">${esc(P.suivi_annuel)}</span></div>
+  </div>
+  ${ext(L.rendez_vous,'Prendre rendez-vous')}
+  <span class="eyebrow">Formations en ligne</span>
+  <div class="list">
+    <div class="row"><div>Apprendre à apprendre${L.apprendre_a_apprendre?`<small><a href="${esc(L.apprendre_a_apprendre)}" target="_blank" rel="noopener">Voir la formation</a></small>`:''}</div><span class="p">${esc(P.apprendre_a_apprendre)}</span></div>
+    <div class="row"><div>La santé mentale de mon ado${L.sante_mentale?`<small><a href="${esc(L.sante_mentale)}" target="_blank" rel="noopener">Voir la formation</a></small>`:''}</div><span class="p">${esc(P.sante_mentale)}</span></div>
+  </div>
+  <a class="btn ghost" href="${mailto('Question depuis l\'application')}">Poser une question à Pascal</a>
+  <p class="small">${esc(C.email_contact)}</p>`,
+
+age: () => `
+  <h1>Avant de commencer</h1>
+  <p class="lead">Quel âge as-tu ?</p>
+  ${go('set-jeune-15','15 ans ou plus')}
+  ${go('moins15','Moins de 15 ans','btn ghost')}
+  <p class="small">On ne te demande ni ton nom ni ta date de naissance.</p>`,
+
+moins15: () => `
+  <h1>Il faudra l'accord d'un parent</h1>
+  <p>Tu peux déjà lire tous les contenus. Pour garder tes réponses dans ton espace personnel, la loi demande l'accord d'un de tes parents avant 15 ans.</p>
+  ${go('accord','Un parent est avec moi')}
+  ${go('set-jeune-moins15','Continuer sans espace personnel','btn ghost')}`,
+
+accord: () => `
+  <h1>Accord d'un parent</h1>
+  <p>Votre enfant souhaite garder ses réponses personnelles dans l'application. Elles restent sur ce téléphone et ne sont envoyées à personne, ni à vous ni à Pascal Tamin.</p>
+  <label class="check" for="accord-ok"><input type="checkbox" id="accord-ok"><span>Je suis son parent et je donne mon accord.</span></label>
+  <button class="btn" id="accord-btn">Valider</button>
+  <div class="slot"></div>`,
+
+jeune: () => {
+  const perso = mem.get('perso', false);
+  const q = C.semaine.jeune_question;
+  const week = q ? `<div class="card soft">
+      <span class="eyebrow">Une question pour toi cette semaine</span>
+      <p><b>${esc(q)}</b></p>
+      ${perso ? `<textarea id="rep" aria-label="Ta réponse">${esc(mem.get('brouillon',''))}</textarea>
+      <button class="btn ghost" id="save-rep">Garder ma réponse</button><div class="slot"></div>
+      <p class="small">Ta réponse reste sur ton téléphone. Personne d'autre ne la lit.</p>` :
+      `<p class="small">Réfléchis-y pour toi. Pour garder tes réponses ici, il faut l'accord d'un parent.</p>`}
+    </div>` : '';
+  return `
+  <h1>Salut</h1>
+  ${week}
+  <div class="tiles">
+    <button class="tile" data-go="j-test"><b>Mon orientation</b><span>Le test Profil Orientation</span></button>
+    <button class="tile" data-go="j-parcoursup"><b>Parcoursup 2027</b><span>Ce qui est connu</span></button>
+    <button class="tile" data-go="j-apprendre"><b>Apprendre à apprendre</b><span>Tes méthodes de travail</span></button>
+    <div class="tile off" aria-disabled="true"><b>Motivation et confiance</b><span>Bientôt</span></div>
+  </div>
+  ${perso ? go('j-espace','Mon espace','btn ghost') : ''}`;
+},
+
+'j-test': () => `
+  <h1>Profil Orientation</h1>
+  <p>Un test pour mieux te connaître et réfléchir à ton orientation. Compte 20 à 25 minutes.</p>
+  <div class="card"><p>À la fin, tu choisis si tu envoies tes résultats à Pascal Tamin. Il est le seul à les recevoir. Ils ne sont pas envoyés à tes parents.</p></div>
+  ${ext(L.test_orientation,'Commencer le test')}
+  ${go('j-apres',"J'ai terminé le test",'btn ghost')}`,
+
+'j-apres': () => `
+  <h1>Et maintenant ?</h1>
+  <p>Si tu as envoyé tes résultats, Pascal Tamin les a reçus.</p>
+  <div class="card">
+    <p>Pascal peut en tirer un bilan écrit, ou en parler avec toi lors d'un entretien. C'est à décider avec tes parents.</p>
+    <button class="btn" data-share="orientation-parents">Montrer à mes parents</button>
+    <div class="slot"></div>
+    <p class="small">Le lien ouvre la page « Orientation » pour les parents. Il ne contient pas tes résultats.</p>
+  </div>
+  ${go('jeune',"Retour à l'accueil",'btn ghost')}`,
+
+'j-parcoursup': () => `
+  <h1>Parcoursup 2027</h1>
+  <div class="card"><span class="eyebrow">Ce qui est sûr</span>
+    <ul class="facts"><li>Tu passeras par Parcoursup en 2027.</li><li>Les critères d'examen des formations seront publics.</li><li>Si une formation te refuse, le refus sera expliqué.</li></ul></div>
+  <div class="card"><span class="eyebrow">Pas encore connu</span><p>Le calendrier 2027 n'est pas publié.</p></div>
+  <p class="small">Vérifié le ${esc(C.parcoursup.verifie_le)}.</p>
+  <div class="card soft">
+    <p><b>Un parcours Parcoursup 2027 est en préparation.</b></p>
+    ${L.prevenir_parcoursup ? ext(L.prevenir_parcoursup,'Me prévenir') :
+      `<a class="btn" href="${mailto('Prévenez-moi : parcours Parcoursup 2027')}">Me prévenir par email</a>`}
+  </div>`,
+
+'j-apprendre': () => `
+  <h1>Apprendre à apprendre</h1>
+  <p>Une formation en ligne, sous forme de jeu, avec une progression par niveaux. Tu avances à ton rythme.</p>
+  <div class="card"><p>Elle est entièrement privée : Pascal Tamin n'a accès ni à ton parcours ni à tes résultats.</p></div>
+  <p>C'est une formation payante, prise par tes parents.</p>
+  <button class="btn" data-share="p-accomp">Montrer à mes parents</button>
+  <div class="slot"></div>
+  ${ext(L.espace_formation,'Ouvrir mon espace de formation','btn ghost')}`,
+
+'j-espace': () => {
+  const reps = mem.get('reponses', []);
+  const list = reps.length ? reps.slice().reverse().map(r=>`<div class="answer"><p class="small">${esc(r.date)} · ${esc(r.q)}</p><p>${esc(r.t)}</p></div>`).join('')
+    : `<p class="small">Tes réponses aux questions de la semaine s'afficheront ici.</p>`;
+  return `
+  <h1>Mon espace</h1>
+  <p class="lead">Ce que tu écris ici reste à toi. Tes parents ne le voient pas.</p>
+  <div class="card"><span class="eyebrow">Mes réponses</span>${list}</div>
+  <p class="small">Tes réponses sont gardées sur ce téléphone seulement. Si tu changes de téléphone ou effaces les données du navigateur, elles disparaissent.</p>
+  ${reps.length ? `<button class="btn ghost" id="wipe">Effacer mes réponses</button><div class="slot"></div>` : ''}`;
+}
+};
+
+/* ---------- Navigation ---------- */
+const homeOf = () => mem.get('role','') === 'jeune' ? 'jeune' : (mem.get('role','') === 'parent' ? 'parent' : 'choix');
+function route(){ const h = location.hash.slice(1); return screens[h] ? h : homeOf(); }
+
+function render(){
+  const r = route();
+  $('#view').innerHTML = screens[r]();
+  $('#back').hidden = (r === homeOf() || r === 'choix');
+  const role = mem.get('role','');
+  $('#foot').innerHTML = role ? `<button data-go="reset">Changer de profil</button><a href="/donnees.html">Vos données</a>` : `<a href="/donnees.html">Vos données</a>`;
+  window.scrollTo(0,0);
+  bind(r);
+}
+
+function nav(r){
+  if (r === 'set-parent'){ mem.set('role','parent'); r = 'parent'; }
+  else if (r === 'set-jeune-15'){ mem.set('role','jeune'); mem.set('perso', true); r = 'jeune'; }
+  else if (r === 'set-jeune-moins15'){ mem.set('role','jeune'); mem.set('perso', false); r = 'jeune'; }
+  else if (r === 'reset'){ mem.del('role'); r = 'choix'; }
+  if (location.hash === '#'+r) render(); else location.hash = r;
+}
+
+function bind(r){
+  const ib = $('#do-install');
+  if (ib) ib.onclick = () => { installEvent.prompt(); installEvent.userChoice.finally(()=>{ installEvent=null; render(); }); };
+  if (r === 'accord'){
+    $('#accord-btn').onclick = () => {
+      if (!$('#accord-ok').checked){ $('.slot').innerHTML = `<p class="toast">Cochez la case pour donner votre accord.</p>`; return; }
+      mem.set('role','jeune'); mem.set('perso', true); mem.set('accord_parent', new Date().toISOString().slice(0,10)); location.hash = 'jeune';
+    };
+  }
+  if (r === 'jeune' && $('#save-rep')){
+    const ta = $('#rep');
+    ta.oninput = () => mem.set('brouillon', ta.value);
+    $('#save-rep').onclick = () => {
+      const t = ta.value.trim(); const slot = ta.parentElement.querySelector('.slot');
+      if (!t){ slot.innerHTML = `<p class="toast">Écris ta réponse avant de la garder.</p>`; return; }
+      const reps = mem.get('reponses', []);
+      reps.push({date: new Date().toLocaleDateString('fr-FR'), q: C.semaine.jeune_question, t});
+      mem.set('reponses', reps); mem.del('brouillon'); ta.value = '';
+      slot.innerHTML = `<p class="toast">Gardée dans ton espace.</p>`;
+    };
+  }
+  if (r === 'j-espace' && $('#wipe')){
+    let armed = false;
+    $('#wipe').onclick = () => {
+      if (!armed){ armed = true; $('#wipe').textContent = 'Confirmer : tout effacer'; return; }
+      mem.del('reponses'); render();
+    };
+  }
+}
+
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g){ nav(g.dataset.go); return; }
+  const s = e.target.closest('[data-share]');
+  if (s){ const slot = s.parentElement.querySelector('.slot'); shareLink(s.dataset.share, msg => { if (slot) slot.innerHTML = `<p class="toast">${msg}</p>`; }); }
+});
+$('#back').onclick = () => { if (history.length > 1) history.back(); else nav(homeOf()); };
+window.addEventListener('hashchange', render);
+
+/* Lien « Envoyer le test » : ouvre directement le test */
+if (location.hash === '#test'){ location.replace(L.test_orientation); }
+
+render();
+
+if ('serviceWorker' in navigator){ window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(()=>{})); }
+})();
+</script>
+</body>
+</html>
