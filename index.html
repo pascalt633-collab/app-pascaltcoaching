@@ -137,11 +137,16 @@ const ICON_OK = `<svg viewBox="0 0 24 24" width="30" height="30" aria-hidden="tr
 
 function shareLink(path, done){
   const url = path ? base + '/#' + path : base + '/';
-  if (navigator.share){ navigator.share({title:'PascalTCoaching', url}).catch(()=>{}); return; }
-  const fallback = () => done(`Copiez ce lien : <b>${esc(url)}</b>`);
+  const tu = mem.get('role','') === 'jeune';
+  const mobile = isIOS() || /android/i.test(navigator.userAgent);
+  /* Sur téléphone : le panneau de partage habituel du téléphone (SMS, WhatsApp, email…) */
+  if (mobile && navigator.share){ navigator.share({title:'PascalTCoaching', url}).catch(()=>{}); return; }
+  /* Sur ordinateur : on copie simplement le lien */
+  const msgOk = tu ? `Lien copié : <b>${esc(url)}</b><br>Colle-le dans un message.` : `Lien copié : <b>${esc(url)}</b><br>Collez-le dans un SMS ou un email.`;
+  const msgKo = tu ? `Copie ce lien : <b>${esc(url)}</b>` : `Copiez ce lien : <b>${esc(url)}</b>`;
   if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(()=>done('Lien copié. Vous pouvez le coller dans un message.'), fallback);
-  } else fallback();
+    navigator.clipboard.writeText(url).then(()=>done(msgOk), ()=>done(msgKo));
+  } else done(msgKo);
 }
 
 function mailto(subject){ return `mailto:${C.email_contact}?subject=${encodeURIComponent(subject)}`; }
@@ -205,16 +210,18 @@ parent: () => {
   <ol class="steps">
     <li><span>Votre enfant passe le test <b>Profil Orientation</b> : gratuit, 20 à 25 minutes, de la 3e à l'après-bac.</span></li>
     <li><span>Avec son accord, ses résultats sont envoyés à Pascal Tamin seul. Ils ne vous sont pas transmis.</span></li>
-    <li><span>Pour aller plus loin, deux possibilités.</span></li>
   </ol>
+  ${ext(L.test_orientation,'Ouvrir le test')}
+  <p class="small">Le test se remplit par votre enfant, sur votre téléphone ou le sien.</p>
+  <button class="btn ghost" data-share="test">Envoyer le test à mon enfant</button>
+  <div class="slot"></div>
+  <h2>Pour aller plus loin</h2>
   <div class="list">
     <div class="row"><div>Bilan d'orientation écrit<small>Livré sous 72 h ouvrées. Déductible de l'entretien.</small></div><span class="p">${esc(P.bilan_ecrit)}</span></div>
     <div class="row"><div>Entretien d'orientation, 1 h 30<small>Bilan écrit inclus.</small></div><span class="p">${esc(P.entretien_orientation)}</span></div>
   </div>
   ${ext(L.commande_bilan_ecrit,'Commander le bilan écrit')}
   ${ext(L.rendez_vous,'Prendre rendez-vous','btn ghost')}
-  <button class="btn ghost" data-share="test">Envoyer le test à mon enfant</button>
-  <div class="slot"></div>
   ${installCard(false)}`,
 
 'p-accomp': () => `
