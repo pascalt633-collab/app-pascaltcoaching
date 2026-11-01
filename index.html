@@ -264,11 +264,11 @@ installer: () => {
     <p class="lead">Trois gestes, une seule fois.</p>
     ${step0}
     <ol class="guide">
-      <li><span class="picto">${ICON_SHARE}</span><span><b>Toucher le bouton Partager</b>, dans la barre en bas de l'écran. S'il n'apparaît pas, toucher d'abord « ⋯ ».</span></li>
+      <li><span class="picto">${ICON_SHARE}</span><span><b>Toucher le bouton Partager</b> (un carré avec une flèche), dans la barre de Safari, en haut ou en bas de l'écran selon votre iPhone. S'il n'apparaît pas, toucher d'abord « ⋯ ».</span></li>
       <li><span class="picto">${ICON_PLUS}</span><span><b>Faire défiler</b> la liste et toucher <b>« Sur l'écran d'accueil »</b>.</span></li>
       <li><span class="picto">${ICON_OK}</span><span>Toucher <b>« Ajouter »</b>, en haut à droite. L'icône PT apparaît à côté de vos autres applications.</span></li>
     </ol>
-    ${inApp() ? '' : `<div class="hint" aria-hidden="true">Le bouton Partager est en bas<span>↓</span></div>`}`;
+    `;
   }
   if (/android/i.test(navigator.userAgent)){
     return `<h1>Ajouter à l'écran d'accueil</h1>
